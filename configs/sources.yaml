@@ -1,0 +1,118 @@
+# sources.yaml — PDF download source configuration
+
+# Each source entry controls whether that source adapter is active,
+# how many files to download, which PDF types it provides, and extra options.
+
+sources:
+
+  arxiv:
+    enabled: true
+    adapter: "arxiv"
+    pdf_types:
+      - complex_layout_pdf
+    subfolders:
+      complex_layout_pdf: "arxiv"
+    limit_per_type: 7
+    search_queries:
+      - "large language models"
+    max_retries: 3
+    timeout_seconds: 60
+
+  internet_archive:
+    enabled: true
+    adapter: "internet_archive"
+    pdf_types:
+      - image_only_scanned_pdf
+      - searchable_image_pdf
+    subfolders:
+      image_only_scanned_pdf: "internet_archive"
+      searchable_image_pdf: "internet_archive"
+    limit_per_type: 3
+    collections:
+      - "texts"
+      - "americana"
+    max_retries: 3
+    timeout_seconds: 120
+
+  funsd:
+    enabled: true
+    adapter: "funsd"
+    pdf_types:
+      - forms_interactive_pdf
+    subfolders:
+      forms_interactive_pdf: "funsd"
+    limit_per_type: 5
+    source_url: "https://guillaumejaume.github.io/FUNSD/"
+    download_url: "https://guillaumejaume.github.io/FUNSD/dataset.zip"
+    max_retries: 3
+    timeout_seconds: 120
+
+  data_gov:
+    enabled: true
+    adapter: "data_gov"
+    pdf_types:
+      - true_digital_pdf
+    limit_per_type: 3
+    api_url: "https://catalog.data.gov/api/3/action/resource_search"
+    max_retries: 3
+    timeout_seconds: 60
+
+  arxiv_specialized:
+    enabled: true
+    adapter: "arxiv"
+    pdf_types:
+      - specialized_pdf
+    subfolders:
+      specialized_pdf: "arxiv"
+    limit_per_type: 3
+    search_queries:
+      - "mathematical proofs theorem equations"
+      - "quantum mechanics derivation formula"
+    max_retries: 3
+    timeout_seconds: 60
+
+  loc_gov:
+    enabled: false
+    adapter: "loc_gov"
+    pdf_types:
+      - true_digital_pdf
+      - searchable_image_pdf
+    limit_per_type: 5
+    # Library of Congress 1,000 .gov PDF Dataset
+    collection_url: "https://www.loc.gov/item/2020445568/"
+    max_retries: 3
+    timeout_seconds: 60
+
+  doclaynet:
+    enabled: false   # Requires manual download from HuggingFace / IBM
+    adapter: "placeholder"
+    pdf_types:
+      - complex_layout_pdf
+    subfolders:
+      complex_layout_pdf: "doclaynet"
+    notes: "Download from https://github.com/DS4SD/DocLayNet — requires HF account"
+
+  open_rag_bench:
+    enabled: false   # Requires HF_TOKEN for gated dataset
+    adapter: "placeholder"
+    pdf_types:
+      - true_digital_pdf
+      - complex_layout_pdf
+    notes: "Download from https://huggingface.co/datasets/vectara/open_ragbench — requires HF token"
+
+  rvl_cdip:
+    enabled: false   # Large dataset — only samples supported
+    adapter: "placeholder"
+    pdf_types:
+      - image_only_scanned_pdf
+      - searchable_image_pdf
+      - forms_interactive_pdf
+    notes: "Download from https://adamharley.com/rvl-cdip/ — 400k images, use samples only"
+
+  kg_rag:
+    enabled: false
+    adapter: "placeholder"
+    pdf_types:
+      - true_digital_pdf
+      - complex_layout_pdf
+    notes: "Download from https://github.com/docugami/KG-RAG-datasets"

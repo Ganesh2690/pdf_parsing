@@ -1,0 +1,75 @@
+# logging.yaml — structured logging configuration
+
+logging:
+  level: INFO                    # DEBUG | INFO | WARNING | ERROR
+  format: json                   # json | text (text for local dev readability)
+  include_timestamp: true
+  timestamp_format: iso          # iso | unix
+  include_run_id: true
+  include_hostname: false        # do not log hostname to avoid PII
+  include_pid: true
+
+# JSONL log file routing — each category writes to its own file
+log_files:
+  run:
+    path: "logs/run.log.jsonl"
+    level: INFO
+    description: "Master run log — all pipeline stages"
+
+  download:
+    path: "logs/download.log.jsonl"
+    level: DEBUG
+    description: "All download attempts, retries, completions, skips"
+
+  parser_selection:
+    path: "logs/parser_selection.log.jsonl"
+    level: INFO
+    description: "Parser trial and selection decision events"
+
+  extraction:
+    path: "logs/extraction.log.jsonl"
+    level: DEBUG
+    description: "Per-page and per-block extraction events"
+
+  verification:
+    path: "logs/verification.log.jsonl"
+    level: INFO
+    description: "Validation checks and diff results"
+
+  errors:
+    path: "logs/errors.log.jsonl"
+    level: ERROR
+    description: "Exceptions, parse failures, download failures"
+
+  metrics:
+    path: "logs/metrics.log.jsonl"
+    level: INFO
+    description: "Timing, counts, success rates, quality scores"
+
+  provenance:
+    path: "logs/provenance.log.jsonl"
+    level: INFO
+    description: "Code version, file hashes, configs, data lineage"
+
+# Console output settings (in addition to file output)
+console:
+  enabled: true
+  level: INFO
+  format: text          # Use text for human-readable console output
+  colorize: true
+
+# Required event fields (validated at runtime)
+required_fields:
+  - timestamp
+  - run_id
+  - event_type
+  - stage
+
+# Fields that must NEVER appear in logs (security)
+forbidden_fields:
+  - password
+  - secret
+  - token
+  - api_key
+  - credential
+  - authorization

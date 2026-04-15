@@ -1,0 +1,147 @@
+# parsers.yaml — parser configuration
+
+# Each parser can be enabled/disabled globally.
+# Per-PDF-type overrides are supported.
+
+parsers:
+
+  pymupdf:
+    enabled: true
+    module: "pdf_research_pipeline.parsers.pymupdf_parser"
+    class: "PyMuPDFParser"
+    extract_text: true
+    extract_images: true
+    extract_tables: false   # Use dedicated table extractor
+    extract_blocks: true
+    extract_words: true
+    dpi: 150
+    # Best for: true_digital_pdf, complex_layout_pdf (fast baseline)
+
+  pdfplumber:
+    enabled: true
+    module: "pdf_research_pipeline.parsers.pdfplumber_parser"
+    class: "PDFPlumberParser"
+    extract_text: true
+    extract_tables: true
+    extract_words: true
+    extract_chars: false
+    # Best for: true_digital_pdf, searchable_image_pdf
+
+  pypdf:
+    enabled: true
+    module: "pdf_research_pipeline.parsers.pypdf_parser"
+    class: "PyPDFParser"
+    extract_text: true
+    # Best for: baseline comparison on true_digital_pdf
+
+  pypdfium2:
+    enabled: true
+    module: "pdf_research_pipeline.parsers.pypdfium2_parser"
+    class: "PyPDFium2Parser"
+    extract_chars: false    # Per-char bounding boxes (expensive; off by default)
+    extract_links: false    # Hyperlink extraction
+    # Best for: true_digital_pdf, complex_layout_pdf — direct PDFium binding
+
+  unstructured:
+    enabled: true
+    module: "pdf_research_pipeline.parsers.unstructured_parser"
+    class: "UnstructuredParser"
+    strategy: "fast"         # Options: fast, hi_res, ocr_only  (fast uses pdfminer; hi_res needs detectron2)
+    extract_images: false
+    include_page_breaks: true
+    # Best for: complex_layout_pdf, forms_interactive_pdf
+
+  tesseract:
+    enabled: true   # Binary search is automatic; parser fails gracefully if not found
+    module: "pdf_research_pipeline.parsers.tesseract_parser"
+    class: "TesseractParser"
+    lang: "eng"
+    dpi: 300
+    psm: 3     # Page segmentation mode (3 = auto)
+    oem: 3     # OCR engine mode (3 = LSTM)
+    # Best for: image_only_scanned_pdf
+
+  easyocr:
+    enabled: true
+    module: "pdf_research_pipeline.parsers.easyocr_parser"
+    class: "EasyOCRParser"
+    lang: ["en"]
+    dpi: 200
+    gpu: false
+    paragraph: true
+    # Best for: complex_layout_pdf, image_only_scanned_pdf (deep-learning OCR)
+
+  pdftext:
+    enabled: true
+    module: "pdf_research_pipeline.parsers.pdftext_parser"
+    class: "PDFTextParser"
+    workers: 1
+    flatten_pdf: false
+    # Best for: true_digital_pdf, complex_layout_pdf (fast PDFium-based extraction)
+
+  ocrmypdf:
+    enabled: false
+    module: "pdf_research_pipeline.parsers.ocrmypdf_parser"
+    class: "OCRmyPDFParser"
+    lang: "eng"
+    deskew: true
+    clean: true
+    optimize: 0
+    # Best for: image_only_scanned_pdf, searchable_image_pdf
+
+  marker:
+    enabled: false   # Install separately: pip install marker-pdf
+    module: "pdf_research_pipeline.parsers.marker_parser"
+    class: "MarkerParser"
+    # Best for: complex_layout_pdf, true_digital_pdf (high quality markdown)
+
+  nougat:
+    enabled: false   # Install separately: pip install nougat-ocr
+    module: "pdf_research_pipeline.parsers.nougat_parser"
+    class: "NougatParser"
+    # Best for: scientific PDFs with equations and figures
+
+  camelot:
+    enabled: true
+    module: "pdf_research_pipeline.parsers.table_extractors"
+    class: "CamelotExtractor"
+    flavor: "lattice"   # Options: lattice, stream
+    pages: "all"
+    # Best for: tables in true_digital_pdf, complex_layout_pdf
+
+  tabula:
+    enabled: true
+    module: "pdf_research_pipeline.parsers.table_extractors"
+    class: "TabulaExtractor"
+    pages: "all"
+    multiple_tables: true
+    # Best for: tables in true_digital_pdf (requires Java runtime)
+
+# PDF-type-specific parser routing hints
+# The benchmark system will still test all enabled parsers,
+# but these hints inform the initial selection recommendation.
+pdf_type_hints:
+  true_digital_pdf:
+    primary: pymupdf
+    fallback: pdfplumber
+    table_extractor: camelot
+  image_only_scanned_pdf:
+    primary: tesseract
+    fallback: ocrmypdf
+    table_extractor: null
+  searchable_image_pdf:
+    primary: pdfplumber
+    fallback: tesseract
+    table_extractor: camelot
+  complex_layout_pdf:
+    primary: unstructured
+    fallback: pymupdf
+    table_extractor: camelot
+  forms_interactive_pdf:
+    primary: unstructured
+    fallback: pdfplumber
+    table_extractor: tabula
+  specialized_pdf:
+    primary: pymupdf
+    fallback: unstructured
+    table_extractor: camelot

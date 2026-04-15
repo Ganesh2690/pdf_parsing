@@ -1,0 +1,121 @@
+# pipeline.yaml — end-to-end orchestration settings
+
+pipeline:
+  # Global run settings
+  run_id_prefix: "pipeline"         # Combined with UTC timestamp for unique run_id
+  data_root: "./data"
+  logs_root: "./logs"
+  reports_root: "./reports"
+  artifacts_root: "./artifacts"
+  parsed_root: "./data/parsed"
+
+  # Download stage
+  download:
+    enabled: true
+    max_workers: 4                  # Concurrent download threads
+    skip_if_exists: true            # Skip re-download if file + checksum match
+    verify_checksum: true
+    detect_language: true
+    detect_page_count: true
+    classify_pdf_type: true         # Auto-classify after download using heuristics
+
+    # Page count buckets for diversity
+    page_count_buckets:
+      very_small:
+        min: 1
+        max: 3
+        target_count: 2
+      short:
+        min: 4
+        max: 10
+        target_count: 3
+      medium:
+        min: 11
+        max: 50
+        target_count: 3
+      long:
+        min: 51
+        max: 200
+        target_count: 2
+      very_long:
+        min: 201
+        max: null
+        target_count: 1
+
+  # Catalog stage
+  catalog:
+    enabled: true
+    jsonl_path: "data/catalog/pdf_catalog.jsonl"
+    csv_path: "data/catalog/pdf_catalog.csv"
+    rebuild_on_run: false           # If true, recompute catalog from scratch each run
+
+  # Parse stage
+  parse:
+    enabled: true
+    run_all_parsers: true           # If false, use routing hints from parsers.yaml only
+    save_raw_text: true
+    save_pages_json: true
+    save_blocks_json: true
+    save_tables: true
+    save_images: false              # Disabled by default to save disk space
+    image_format: "png"             # png | jpg
+    per_page_timeout_seconds: 60    # Kill parser if a single page takes > 60s
+    max_page_count_for_full_parse: 200  # Only parse first N pages for very long PDFs
+
+  # Benchmark stage
+  benchmark:
+    enabled: true
+    compare_all_parsers: true
+    generate_csv: true
+    generate_json: true
+    generate_recommendations: true
+    output_dir: "reports"
+
+  # Verification stage
+  verify:
+    enabled: true
+    check_page_count_match: true
+    check_non_empty_text: true
+    check_table_detection: true
+    check_suspiciously_short: true
+    short_text_threshold_chars: 100   # Flag pages with < 100 chars
+    generate_diff_report: true
+    generate_failed_files_report: true
+
+  # Provenance stage
+  provenance:
+    enabled: true
+    capture_git_commit: true
+    capture_python_version: true
+    capture_os_info: true
+    capture_package_versions: true
+    capture_config_hashes: true
+    capture_input_hashes: true
+    capture_output_hashes: true
+    output_dir: "artifacts"
+
+  # OCR settings
+  ocr:
+    enabled: true
+    force_ocr_for_types:
+      - image_only_scanned_pdf
+    optional_ocr_for_types:
+      - searchable_image_pdf        # Compare OCR vs text layer
+    language: "eng"
+    dpi: 300
+
+  # Table extraction
+  tables:
+    enabled: true
+    extractors:
+      - camelot
+      - tabula
+    output_format: "json"           # json | csv | both
+    save_as_csv: true
+
+  # Comparison and diff
+  diff:
+    enabled: true
+    compare_parser_pairs: true
+    baseline_parser: "pymupdf"      # Compare all parsers against this baseline
+    diff_tool: "deepdiff"

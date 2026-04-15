@@ -1,0 +1,124 @@
+# scoring.yaml — parser scoring dimension weights
+
+# 12 scoring dimensions as specified in prompt.md section 7.
+# Weights are per-PDF-type overrides on top of the global defaults.
+# All weights are relative. The scorer normalises to a 0–100 weighted score.
+
+global_weights:
+  text_completeness: 0.20
+  heading_preservation: 0.10
+  paragraph_preservation: 0.10
+  table_extraction_quality: 0.10
+  page_ordering_quality: 0.10
+  ocr_quality: 0.08
+  coordinate_richness: 0.07
+  speed: 0.05
+  memory_usage: 0.05
+  structural_fidelity: 0.08
+  markdown_readability: 0.04
+  rag_suitability: 0.03
+
+# PDF-type-specific weight overrides
+pdf_type_weights:
+  true_digital_pdf:
+    text_completeness: 0.25
+    heading_preservation: 0.12
+    paragraph_preservation: 0.12
+    table_extraction_quality: 0.08
+    page_ordering_quality: 0.10
+    ocr_quality: 0.01         # OCR not expected
+    coordinate_richness: 0.08
+    speed: 0.06
+    memory_usage: 0.05
+    structural_fidelity: 0.08
+    markdown_readability: 0.03
+    rag_suitability: 0.02
+
+  image_only_scanned_pdf:
+    text_completeness: 0.15
+    heading_preservation: 0.05
+    paragraph_preservation: 0.05
+    table_extraction_quality: 0.05
+    page_ordering_quality: 0.10
+    ocr_quality: 0.35         # OCR is the primary concern
+    coordinate_richness: 0.05
+    speed: 0.05
+    memory_usage: 0.05
+    structural_fidelity: 0.05
+    markdown_readability: 0.02
+    rag_suitability: 0.03
+
+  searchable_image_pdf:
+    text_completeness: 0.20
+    heading_preservation: 0.08
+    paragraph_preservation: 0.08
+    table_extraction_quality: 0.07
+    page_ordering_quality: 0.10
+    ocr_quality: 0.18         # OCR quality matters but text layer may exist
+    coordinate_richness: 0.07
+    speed: 0.05
+    memory_usage: 0.05
+    structural_fidelity: 0.07
+    markdown_readability: 0.03
+    rag_suitability: 0.02
+
+  complex_layout_pdf:
+    text_completeness: 0.18
+    heading_preservation: 0.12
+    paragraph_preservation: 0.10
+    table_extraction_quality: 0.12
+    page_ordering_quality: 0.12   # Column ordering critical
+    ocr_quality: 0.03
+    coordinate_richness: 0.10     # Bounding boxes important for layout
+    speed: 0.04
+    memory_usage: 0.04
+    structural_fidelity: 0.12
+    markdown_readability: 0.01
+    rag_suitability: 0.02
+
+  forms_interactive_pdf:
+    text_completeness: 0.15
+    heading_preservation: 0.05
+    paragraph_preservation: 0.05
+    table_extraction_quality: 0.10
+    page_ordering_quality: 0.08
+    ocr_quality: 0.05
+    coordinate_richness: 0.12     # Field positions matter
+    speed: 0.05
+    memory_usage: 0.05
+    structural_fidelity: 0.20     # Field-value association is critical
+    markdown_readability: 0.02
+    rag_suitability: 0.08
+
+  specialized_pdf:
+    text_completeness: 0.22
+    heading_preservation: 0.12
+    paragraph_preservation: 0.10
+    table_extraction_quality: 0.08
+    page_ordering_quality: 0.10
+    ocr_quality: 0.03
+    coordinate_richness: 0.10
+    speed: 0.05
+    memory_usage: 0.05
+    structural_fidelity: 0.12
+    markdown_readability: 0.01
+    rag_suitability: 0.02
+
+# Scoring thresholds
+thresholds:
+  minimum_acceptable_score: 40.0     # Below this → flag as "not recommended"
+  good_score: 65.0                   # Above this → flag as "acceptable"
+  excellent_score: 80.0              # Above this → flag as "recommended"
+  max_score: 100.0
+
+# Speed scoring scale (lower time = higher score)
+speed_scoring:
+  excellent_ms: 1000       # < 1s per page → full speed score
+  acceptable_ms: 5000      # < 5s per page → half speed score
+  poor_ms: 30000           # > 30s per page → zero speed score
+
+# Memory usage scoring (MB per page)
+memory_scoring:
+  excellent_mb: 50
+  acceptable_mb: 200
+  poor_mb: 1000

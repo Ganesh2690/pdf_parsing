@@ -1,0 +1,66 @@
+# Core PDF parsing libraries
+pymupdf>=1.23.0
+pdfplumber>=0.10.0
+pypdf>=4.0.0
+pypdfium2>=4.20.0
+
+# Layout-aware and AI-assisted extraction
+unstructured[pdf]>=0.12.0
+unstructured-inference>=0.7.0
+
+# OCR
+pytesseract>=0.3.10
+Pillow>=10.0.0
+ocrmypdf>=16.0.0
+pdf2image>=1.17.0
+
+# Table extraction
+camelot-py[cv]>=0.11.0
+tabula-py>=2.9.0
+
+# Marker PDF (layout-aware markdown extraction)
+# marker-pdf>=0.2.0   # Install separately: pip install marker-pdf
+
+# Nougat (scientific PDF extraction)
+# nougat-ocr>=0.1.0  # Install separately: pip install nougat-ocr
+
+# Structured logging
+structlog>=24.0.0
+
+# Configuration
+pyyaml>=6.0.1
+python-dotenv>=1.0.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# CLI
+typer>=0.9.0
+rich>=13.7.0
+
+# HTTP and downloads
+requests>=2.31.0
+httpx>=0.27.0
+tenacity>=8.2.3
+tqdm>=4.66.0
+
+# Data handling
+pandas>=2.1.0
+jsonlines>=4.0.0
+
+# Hashing and provenance
+hashlib-compat>=1.0.0; python_version < "3.9"
+
+# Language detection
+langdetect>=1.0.9
+
+# Diffing
+deepdiff>=6.7.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.12.0
+responses>=0.24.0
+
+# Type checking (dev)
+mypy>=1.8.0

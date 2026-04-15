@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pdf-research-pipeline"
+version = "0.1.0"
+description = "Production-grade PDF download, parsing, benchmarking, and RAG ingestion research pipeline"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "PDF Research Pipeline" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pymupdf>=1.23.0",
+    "pdfplumber>=0.10.0",
+    "pypdf>=4.0.0",
+    "pypdfium2>=4.20.0",
+    "unstructured[pdf]>=0.12.0",
+    "pytesseract>=0.3.10",
+    "Pillow>=10.0.0",
+    "ocrmypdf>=16.0.0",
+    "pdf2image>=1.17.0",
+    "camelot-py[cv]>=0.11.0",
+    "tabula-py>=2.9.0",
+    "structlog>=24.0.0",
+    "pyyaml>=6.0.1",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "typer>=0.9.0",
+    "rich>=13.7.0",
+    "requests>=2.31.0",
+    "httpx>=0.27.0",
+    "tenacity>=8.2.3",
+    "tqdm>=4.66.0",
+    "pandas>=2.1.0",
+    "jsonlines>=4.0.0",
+    "langdetect>=1.0.9",
+    "deepdiff>=6.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+    "responses>=0.24.0",
+    "mypy>=1.8.0",
+]
+
+[project.scripts]
+pdf-pipeline = "pdf_research_pipeline.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
